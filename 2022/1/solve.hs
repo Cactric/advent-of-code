@@ -1,5 +1,7 @@
 import Data.Char
 import Data.List.Split
+import Data.List
+
 
 readLines :: FilePath -> IO [String]
 readLines = fmap lines . readFile
@@ -20,5 +22,12 @@ main = do
     let intBlocks = map groupToInt blocks
     let elfCals = map sum intBlocks
     let maxCals = maximum elfCals
+    putStr "Part one: "
     putStrLn $ show maxCals
     -- yay part one is done
+    
+    let sortedCals = reverse (sort elfCals)
+    let topThree = take 3 sortedCals
+    putStr "Part two: "
+    putStrLn $ show (sum topThree)
+    
