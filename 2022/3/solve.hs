@@ -35,6 +35,18 @@ scoreChar c = if isUpper c then (ord c - 38) else (ord c - 96)
 score :: String -> Int
 score s = sum (map scoreChar s)
 
+triplets :: [String] -> [[String]]
+triplets (x:y:z:as) = [[x, y, z]] ++ triplets as
+triplets _ = []
+
+inThree :: [String] -> Char
+inThree (x:y:z) = firstOrQuestionMark (dropWhile (== '?')(map (same (head z)) (map (same x) y)))
+inThree _ = '?'
+
+whatInThree :: [[String]] -> [Char]
+whatInThree ((x:y:z):xs) = inThree (x:y:z) : whatInThree xs
+whatInThree _ = []
+
 main :: IO()
 main = do
     fileContents <- readLines "input"
@@ -45,3 +57,9 @@ main = do
     
     putStr "Part one: "
     putStrLn $ show scores
+    
+    let threes = triplets fileContents
+    let tricommon = whatInThree threes
+    
+    putStr "Part two: "
+    putStrLn $ show (score tricommon)
