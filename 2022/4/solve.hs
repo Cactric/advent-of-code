@@ -22,6 +22,13 @@ pairOverlapping :: [(Int, Int)] -> Bool
 pairOverlapping [] = False
 pairOverlapping (x:y:_) = overlapping x y
 
+touching :: (Int, Int) -> (Int, Int) -> Bool
+touching (a,b) (c,d) = (b >= c) && (a <= d)
+
+pairTouching :: [(Int, Int)] -> Bool
+pairTouching [] = False
+pairTouching (x:y:_) = touching x y
+
 countTrues :: [Bool] -> Int -> Int
 countTrues [] c = c
 countTrues (x:xs) c = if x == True then countTrues xs (c+1) else countTrues xs c
@@ -36,5 +43,6 @@ main = do
     putStr "Part one: "
     putStrLn $ show (countTrues overlapBools 0)
     
+    let touchingBools = map pairTouching pairs
     putStr "Part two: "
-    putStrLn "?"
+    putStrLn $ show (countTrues touchingBools 0)
