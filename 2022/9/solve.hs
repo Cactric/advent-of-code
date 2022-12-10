@@ -8,7 +8,8 @@ readLines :: FilePath -> IO [String]
 readLines = fmap lines . readFile
 
 catchUp :: Knot -> Knot -> Knot
-catchUp (hx, hy) (tx, ty) = if mags < 2^2 then (tx, ty) else ((tx + dx), (ty + dy)) where
+catchUp (hx, hy) (tx, ty) = if mags < 2^2 then (tx, ty) else
+    catchUp (hx, hy) ((tx + dx), (ty + dy)) where
     dx = signum (hx - tx)
     dy = signum (hy - ty)
     mags = (hx - tx)^2 + (hy - ty)^2
@@ -65,19 +66,19 @@ polyChase h [] = []
 polyChase h (ts:tss) = ((catchUp h (head ts)):ts):(polyChase (head ts) tss)
 
 polyLeft :: Int -> Knot -> [[Knot]] -> [[Knot]]
-polyLeft 0 h tss = (polyChase h tss)
+polyLeft 0 h tss = tss
 polyLeft n (hx, hy) tss = polyLeft (n-1) nh $ polyChase nh tss where
     nh = (hx-1, hy)
 polyRight :: Int -> Knot -> [[Knot]] -> [[Knot]]
-polyRight 0 h tss = (polyChase h tss)
+polyRight 0 h tss = tss
 polyRight n (hx, hy) tss = polyRight (n-1) nh $ polyChase nh tss where
     nh = (hx+1, hy)
 polyDown :: Int -> Knot -> [[Knot]] -> [[Knot]]
-polyDown 0 h tss = (polyChase h tss)
+polyDown 0 h tss = tss
 polyDown n (hx, hy) tss = polyDown (n-1) nh $ polyChase nh tss where
     nh = (hx, hy-1)
 polyUp :: Int -> Knot -> [[Knot]] -> [[Knot]]
-polyUp 0 h tss = (polyChase h tss)
+polyUp 0 h tss = tss
 polyUp n (hx, hy) tss = polyUp (n-1) nh $ polyChase nh tss where
     nh = (hx, hy+1)
 
@@ -88,7 +89,7 @@ polyAction a h tss =
     if d == "U" then polyUp n h tss else
     {-if d == "D" then-} polyDown n h tss where
         d = head(splitOn " " a)
-        n = (read ((splitOn " " a) !! 1))
+        n = (read ((splitOn " " a) !! 1) :: Int)
 
 polyknot :: [String] -> Knot -> [[Knot]] -> [[Knot]]
 polyknot [] h tss = tss
@@ -106,3 +107,17 @@ main = do
     
     putStr "Part two (not correct): "
     putStrLn $ show $ tentaKnot fileContents
+
+test :: IO()
+test = do
+    let simple = ["R 4", "U 4", "L 3", "D 1", "R 4", "D 1", "L 5", "R 2"]
+    let complex = ["R 5", "U 8", "L 8", "D 3", "R 17", "D 10", "L 25", "U 20"]
+    
+    putStr "Part one (simple, should be 13): \t"
+    putStrLn $ show (ropeSimulate simple)
+    
+    putStr "Part two (simple, should be 1): \t"
+    putStrLn $ show (tentaKnot simple)
+    
+    putStr "Part two (complex, should be 36): \t"
+    putStrLn $ show (tentaKnot complex)
