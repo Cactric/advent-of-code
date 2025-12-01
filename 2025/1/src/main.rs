@@ -14,13 +14,8 @@ fn main() {
     let mut position = 50; // the dial starts pointing at 50
     let mut zeros = 0; // the actual password is the number of times it's pointing at 0
     let mut zero_clicks = 0; // part two's password
-    let mut lineno = 0;
     
     for i in instructions {
-        lineno += 1;
-        if lineno == 4558 {
-            eprintln!("break")
-        }
         let mut previously_zero = position == 0;
         if i.is_empty() {
             continue;
@@ -41,14 +36,12 @@ fn main() {
             position += 100;
             if !previously_zero {
                 zero_clicks += 1;
-                println!("Click at line {} ({})", lineno, i)
             }
             previously_zero = false;
         }
         while position > 99 {
             position -= 100;
             zero_clicks += 1;
-            println!("Click at line {} ({})", lineno, i);
             previously_zero = position == 0;
         }
         
@@ -56,10 +49,8 @@ fn main() {
             zeros += 1;
             if !previously_zero {
                 zero_clicks += 1;
-                println!("Click at line {} ({})", lineno, i)
             }
         }
-        //println!("trace: {} / pos = {} / zeros = {} / clicks = {}", i, position, zeros, zero_clicks);
     }
     
     eprintln!("Final position: {}", position);
