@@ -53,10 +53,10 @@ fn main() {
                 zero_clicks += 1;
             }
         }
-        println!("trace: {} / pos = {} / zeros = {} / clicks = {}", i, position, zeros, zero_clicks);
+        //println!("trace: {} / pos = {} / zeros = {} / clicks = {}", i, position, zeros, zero_clicks);
     }
     
     println!("Final position: {}", position);
     println!("Number of zeros: {}", zeros);
-    println!("Number of zeros (part two): {}", zero_clicks);
+    println!("Number of zeros (part two, incorrect): {}", zero_clicks);
 }
