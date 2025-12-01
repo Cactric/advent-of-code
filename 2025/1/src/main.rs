@@ -47,10 +47,8 @@ fn main() {
         }
         while position > 99 {
             position -= 100;
-            if !previously_zero {
-                zero_clicks += 1;
-                println!("Click at line {} ({})", lineno, i)
-            }
+            zero_clicks += 1;
+            println!("Click at line {} ({})", lineno, i);
             previously_zero = position == 0;
         }
         
