@@ -43,7 +43,7 @@ fn main() {
                 zero_clicks += 1;
                 println!("Click at line {} ({})", lineno, i)
             }
-            previously_zero = position == 0;
+            previously_zero = false;
         }
         while position > 99 {
             position -= 100;
@@ -64,5 +64,5 @@ fn main() {
     
     eprintln!("Final position: {}", position);
     eprintln!("Number of zeros: {}", zeros);
-    eprintln!("Number of zeros (part two, incorrect): {}", zero_clicks);
+    eprintln!("Number of zeros (part two): {}", zero_clicks);
 }
