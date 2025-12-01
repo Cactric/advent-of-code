@@ -1,11 +1,15 @@
+import sys
+
 file = open("input.txt")
 lines = file.readlines()
 
 position = 50
 zeros = 0
 clicks = 0
+lineno = 0
 
 for instruction in lines:
+    lineno += 1
     if len(instruction) < 2:
         continue
     
@@ -20,6 +24,7 @@ for instruction in lines:
                 position += 100
             if position == 0:
                 clicks += 1
+                print(f"Click at line {lineno} ({instruction.strip()})")
     elif direction == 'R':
         while amount > 0:
             amount -= 1
@@ -28,6 +33,7 @@ for instruction in lines:
                 position -= 100
             if position == 0:
                 clicks += 1
+                print(f"Click at line {lineno} ({instruction.strip()})")
     else:
         print("Error")
         exit(1)
@@ -35,4 +41,4 @@ for instruction in lines:
     if position == 0:
         zeros += 1
 
-print(f"Final position: {position}, zeros: {zeros}, clicks: {clicks}")
+print(f"Final position: {position}, zeros: {zeros}, clicks: {clicks}", file=sys.stderr)
