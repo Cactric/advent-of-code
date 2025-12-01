@@ -16,6 +16,7 @@ fn main() {
     let mut zero_clicks = 0; // part two's password
     
     for i in instructions {
+        let mut previously_zero = position == 0;
         if i.is_empty() {
             continue;
         }
@@ -33,16 +34,26 @@ fn main() {
         
         while position < 0 {
             position += 100;
-            zero_clicks += 1;
+            if !previously_zero {
+                zero_clicks += 1;
+            }
+            previously_zero = position == 0;
         }
         while position > 99 {
             position -= 100;
-            zero_clicks += 1;
+            if !previously_zero {
+                zero_clicks += 1;
+            }
+            previously_zero = position == 0;
         }
         
         if position == 0 {
             zeros += 1;
+            if !previously_zero {
+                zero_clicks += 1;
+            }
         }
+        println!("trace: {} / pos = {} / zeros = {} / clicks = {}", i, position, zeros, zero_clicks);
     }
     
     println!("Final position: {}", position);
