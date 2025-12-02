@@ -53,17 +53,36 @@ fn main() {
             // Determine if the ID is valid
             
             let idstr = id.to_string();
-            if idstr.len() % 2 != 0 {
-                // ID is an odd number of digits, it must be valid
-                continue;
-            } else {
-                // Split it in half and check if the digits are the same
-                let (left, right) = idstr.split_at(idstr.len() / 2);
-                //println!("{} / {}", left, right);
-                if left == right {
-                    // Invalid!
-                    sum_invalid += id;
-                    println!("Found invalid id: {}", idstr);
+            // if idstr.len() % 2 != 0 {
+            //     // ID is an odd number of digits, it must be valid
+            //     continue;
+            // } else {
+            //     // Split it in half and check if the digits are the same
+            //     let (left, right) = idstr.split_at(idstr.len() / 2);
+            //     if left == right {
+            //         // Invalid!
+            //         sum_invalid += id;
+            //         println!("Found invalid id: {}", idstr);
+            //     }
+            // }
+            // Split the id string into chucks of all sizes up to half
+            for l in 1..=(idstr.len() / 2) {
+                // Check there's an integer number of chunks
+                if idstr.len() % l == 0 {
+                    // Build a list of chunks
+                    let mut chunks = Vec::new();
+                    
+                    for n in 0..(idstr.len() / l) {
+                        chunks.push(&idstr[(n*l)..((n+1)*l)]);
+                    }
+                    
+                    // Check if all parts of the chunk are equal to the first chunk
+                    if chunks.iter().all(|c| *c == chunks[0]) {
+                        // Invalid!
+                        sum_invalid += id;
+                        println!("Found invalid id: {}", idstr);
+                        break;
+                    }
                 }
             }
         }
