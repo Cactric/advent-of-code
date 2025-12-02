@@ -42,9 +42,9 @@ fn main() {
     }
     
     // Debug: print ranges
-    for (i,r) in ranges.iter().enumerate() {
+    /*for (i,r) in ranges.iter().enumerate() {
         println!("{}: {} to {}", i, r.minimum, r.maximum);
-    }
+    }*/
     
     let mut sum_invalid = 0;
     // Loop through all the ranges
@@ -80,7 +80,7 @@ fn main() {
                     if chunks.iter().all(|c| *c == chunks[0]) {
                         // Invalid!
                         sum_invalid += id;
-                        println!("Found invalid id: {}", idstr);
+                        //println!("Found invalid id: {}", idstr);
                         break;
                     }
                 }
