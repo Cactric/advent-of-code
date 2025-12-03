@@ -12,6 +12,7 @@ fn main() {
     let banks: Vec<&str> = bank_list.split("\n").collect();
     
     let mut jolt_sum = 0;
+    let mut jolt_sum_p2 = 0;
     
     for bank in banks {
         // Ignore blank lines
@@ -22,7 +23,7 @@ fn main() {
         // Get the highest joltage, split the list at that the first appearance of it, then
         // choose the largest one on the right
         // If none, choose the largest digit on the left
-        let joltages: Vec<(usize, char)> = bank.chars().enumerate().collect();
+        let mut joltages: Vec<(usize, char)> = bank.chars().enumerate().collect();
         let mut highest: (usize, char) = (0, '\0');
         for j in &joltages {
             if j.1 > highest.1 {
@@ -42,7 +43,6 @@ fn main() {
             }
             let bank_joltage = highest.1.to_digit(10).expect("Highest digit wasn't a digit") * 10 +
                                second_highest.1.to_digit(10).expect("Second highest wasn't a digit");
-            println!("Bank joltage: {}", bank_joltage);
             jolt_sum += bank_joltage;
         } else {
             // Choose the largest one on the left
@@ -53,21 +53,28 @@ fn main() {
             }
             let bank_joltage = second_highest.1.to_digit(10).expect("Second highest wasn't a digit") * 10 +
                                highest.1.to_digit(10).expect("Highest digit wasn't a digit");
-            println!("Bank joltage: {}", bank_joltage);
             jolt_sum += bank_joltage;
         }
         
-        /*
         // Sort the joltages of the batteries, using enumerate to have a reference
-        // for the initial order
-        joltages.sort_unstable_by_key(|(_i,c)| *c);
+        // for the initial order.
+        // Joltage has priority, but index is still accounted for
+        joltages.sort_unstable_by_key(|(i,c)| (c.to_digit(10).unwrap() as usize) * bank.len() + *i);
         
-        
-        let mut highest_two = joltages.split_at(joltages.len() - 2).1.to_vec();
-        highest_two.sort();
-        println!("{:?}", highest_two);
-        */
+        let mut highest_twelve = joltages.split_at(joltages.len() - 12).1.to_vec();
+        // Re-sort by index
+        highest_twelve.sort();
+        println!("{:?}", highest_twelve);
+        let mut bank_jolts: u64 = 0;
+        for (_,j) in highest_twelve {
+            let jolts: u64 = j.to_digit(10).unwrap() as u64;
+            bank_jolts *= 10;
+            bank_jolts += jolts;
+            println!("Added {} to produce {}", jolts, bank_jolts);
+        }
+        jolt_sum_p2 += bank_jolts;
     }
     
-    eprintln!("Joltage sum: {}", jolt_sum);
+    eprintln!("Joltage sum (part 1): {}", jolt_sum);
+    eprintln!("Joltage sum (part 2): {}", jolt_sum_p2);
 }
