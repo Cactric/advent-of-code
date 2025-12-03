@@ -53,7 +53,7 @@ fn main() {
         // choose the largest one on the right
         // If none, choose the largest digit on the left
         let joltages: Vec<(usize, char)> = bank.chars().enumerate().collect();
-        print!("Joltages: {:?}, ", joltages);
+        //print!("Joltages: {:?}, ", joltages);
         
         // Recursively choose which digits to add
         let mut output = jolt_choose(2, Vec::new(), joltages);
@@ -62,7 +62,7 @@ fn main() {
         // Make the bank sum
         let bank_joltage = output.iter().fold(0, |acc, (_i, c)| (acc * 10) + c.to_digit(10).unwrap()); 
         jolt_sum += bank_joltage;
-        println!("Bank joltage: {}", bank_joltage);
+        //println!("Bank joltage: {}", bank_joltage);
     }
     
     eprintln!("Joltage sum (part 1): {}", jolt_sum);
