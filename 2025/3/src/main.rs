@@ -27,11 +27,13 @@ fn main() {
         // Get the highest two joltages and sort them by position
         let mut highest_two = joltages.split_at(joltages.len() - 2).1.to_vec();
         highest_two.sort();
+        println!("{:?}", highest_two);
         let mut bank_joltage = 0;
         for (_i, j) in highest_two {
             bank_joltage *= 10;
-            bank_joltage += j as i32;
+            bank_joltage += j.to_digit(10).unwrap();
         }
+        println!("Bank joltage: {}", bank_joltage);
         jolt_sum += bank_joltage;
     }
     
