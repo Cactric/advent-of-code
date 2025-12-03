@@ -1,11 +1,11 @@
 use std::fs::read_to_string;
 use std::env;
 
-fn jolt_choose(batteries: usize, mut accumulator: Vec<(usize, char)>, joltages: Vec<(usize, char)>) -> Vec<(usize, char)> {
+fn jolt_choose(batteries: usize, mut accumulator: Vec<(usize, u32)>, joltages: Vec<(usize, u32)>) -> Vec<(usize, u32)> {
     if accumulator.len() >= batteries || joltages.is_empty() {
         return accumulator;
     }
-    let mut highest: (usize, char) = (0, '\0');
+    let mut highest: (usize, u32) = (0, 0);
     for j in &joltages {
         if j.1 > highest.1 {
             highest = *j;
@@ -57,7 +57,9 @@ fn main() {
         // Get the highest joltage, split the list at that the first appearance of it, then
         // choose the largest one on the right
         // If none, choose the largest digit on the left
-        let joltages: Vec<(usize, char)> = bank.chars().enumerate().collect();
+        let joltages: Vec<(usize, u32)> = bank.chars().map(
+            |c| c.to_digit(10).unwrap()
+        ).enumerate().collect();
         //print!("Joltages: {:?}, ", joltages);
         
         // Recursively choose which digits to add
@@ -65,7 +67,7 @@ fn main() {
         output.sort();
         
         // Make the bank sum
-        let bank_joltage = output.iter().fold(0, |acc, (_i, c)| (acc * 10) + c.to_digit(10).unwrap()); 
+        let bank_joltage = output.iter().fold(0, |acc, (_i, c)| (acc * 10) + c); 
         jolt_sum += bank_joltage;
         
         
@@ -74,7 +76,7 @@ fn main() {
         let mut output_p2 = jolt_choose(12, Vec::new(), joltages);
         output_p2.sort();
         // Make the bank sum
-        let bank_joltage = output_p2.iter().fold(0 as u64, |acc, (_i, c)| (acc * 10) + c.to_digit(10).unwrap() as u64); 
+        let bank_joltage = output_p2.iter().fold(0 as u64, |acc, (_i, c)| (acc * 10) + *c as u64); 
         jolt_sum_p2 += bank_joltage;
         
         //println!("Bank joltage: {}", bank_joltage);
