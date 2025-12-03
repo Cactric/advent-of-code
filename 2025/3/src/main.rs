@@ -19,7 +19,13 @@ fn jolt_choose(batteries: usize, mut accumulator: Vec<(usize, char)>, joltages: 
         // Choose the largest one on the right
         // Excluding the highest already used (after[0])
         accumulator.push(highest);
-        jolt_choose(batteries, accumulator, after.to_vec())
+        let res = jolt_choose(batteries, accumulator, after.to_vec());
+        // If we didn't get enough batteries from the RHS, do it again with the LHS
+        if res.len() <= batteries {
+            jolt_choose(batteries, res, before.to_vec())
+        } else {
+            res
+        }
         // highest * 10 + second_highest
     } else {
         // Choose the largest one on the left
@@ -27,7 +33,6 @@ fn jolt_choose(batteries: usize, mut accumulator: Vec<(usize, char)>, joltages: 
         jolt_choose(batteries, accumulator, before.to_vec())
         // second_highest * 10 + highest
     }
-    
 }
 
 fn main() {
@@ -56,12 +61,22 @@ fn main() {
         //print!("Joltages: {:?}, ", joltages);
         
         // Recursively choose which digits to add
-        let mut output = jolt_choose(2, Vec::new(), joltages);
+        let mut output = jolt_choose(2, Vec::new(), joltages.to_vec());
         output.sort();
         
         // Make the bank sum
         let bank_joltage = output.iter().fold(0, |acc, (_i, c)| (acc * 10) + c.to_digit(10).unwrap()); 
         jolt_sum += bank_joltage;
+        
+        
+        // Part 2.
+        // Second verse same as the first (but with 12 batteries)
+        let mut output_p2 = jolt_choose(12, Vec::new(), joltages);
+        output_p2.sort();
+        // Make the bank sum
+        let bank_joltage = output_p2.iter().fold(0 as u64, |acc, (_i, c)| (acc * 10) + c.to_digit(10).unwrap() as u64); 
+        jolt_sum_p2 += bank_joltage;
+        
         //println!("Bank joltage: {}", bank_joltage);
     }
     
