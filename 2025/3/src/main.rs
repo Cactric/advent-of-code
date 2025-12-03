@@ -1,6 +1,35 @@
 use std::fs::read_to_string;
 use std::env;
 
+fn jolt_choose(batteries: usize, mut accumulator: Vec<(usize, char)>, joltages: Vec<(usize, char)>) -> Vec<(usize, char)> {
+    if accumulator.len() >= batteries || joltages.is_empty() {
+        return accumulator;
+    }
+    let mut highest: (usize, char) = (0, '\0');
+    for j in &joltages {
+        if j.1 > highest.1 {
+            highest = *j;
+        }
+    }
+    let mut splits = joltages.splitn(2, |(i,_c)| *i == highest.0);
+    let before = splits.next().unwrap();
+    let after = splits.next().unwrap();
+    // If the 'after' part contains more than just the highest we just found
+    if after.len() > 0 {
+        // Choose the largest one on the right
+        // Excluding the highest already used (after[0])
+        accumulator.push(highest);
+        jolt_choose(batteries, accumulator, after.to_vec())
+        // highest * 10 + second_highest
+    } else {
+        // Choose the largest one on the left
+        accumulator.push(highest);
+        jolt_choose(batteries, accumulator, before.to_vec())
+        // second_highest * 10 + highest
+    }
+    
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     let filename;
@@ -23,58 +52,17 @@ fn main() {
         // Get the highest joltage, split the list at that the first appearance of it, then
         // choose the largest one on the right
         // If none, choose the largest digit on the left
-        let mut joltages: Vec<(usize, char)> = bank.chars().enumerate().collect();
-        let mut highest: (usize, char) = (0, '\0');
-        for j in &joltages {
-            if j.1 > highest.1 {
-                highest = *j;
-            }
-        }
-        let mut second_highest: (usize, char) = (0, '\0');
-        let (before, after) = joltages.split_at(highest.0);
-        // If the 'after' part contains more than just the highest we just found
-        if after.len() > 1 {
-            // Choose the largest one on the right
-            // Excluding the highest already used (after[0])
-            for j in &after[1..] {
-                if j.1 > second_highest.1 {
-                    second_highest = *j;
-                }
-            }
-            let bank_joltage = highest.1.to_digit(10).expect("Highest digit wasn't a digit") * 10 +
-                               second_highest.1.to_digit(10).expect("Second highest wasn't a digit");
-            jolt_sum += bank_joltage;
-        } else {
-            // Choose the largest one on the left
-            for j in before {
-                if j.1 > second_highest.1 {
-                    second_highest = *j;
-                }
-            }
-            let bank_joltage = second_highest.1.to_digit(10).expect("Second highest wasn't a digit") * 10 +
-                               highest.1.to_digit(10).expect("Highest digit wasn't a digit");
-            jolt_sum += bank_joltage;
-        }
+        let joltages: Vec<(usize, char)> = bank.chars().enumerate().collect();
+        print!("Joltages: {:?}, ", joltages);
         
-        // Sort the joltages of the batteries, using enumerate to have a reference
-        // for the initial order.
-        // Joltage has priority, but index is still accounted for
-        joltages.sort_unstable_by_key(|(i,c)| (c.to_digit(10).unwrap() as usize) * bank.len() + *i);
+        // Recursively choose which digits to add
+        let mut output = jolt_choose(2, Vec::new(), joltages);
+        output.sort();
         
-        let mut highest_twelve = joltages.split_at(joltages.len() - 12).1.to_vec();
-        // Re-sort by index
-        highest_twelve.sort();
-        println!("{:?}", highest_twelve);
-        let mut bank_jolts: u64 = 0;
-        for (_,j) in highest_twelve {
-            let jolts: u64 = j.to_digit(10).unwrap() as u64;
-            bank_jolts *= 10;
-            bank_jolts += jolts;
-            println!("Added {} to produce {}", jolts, bank_jolts);
-        }
-        jolt_sum_p2 += bank_jolts;
-        
-        // Idea to solve p2: same as p1 basically, but obviously it'll need to be a loop and actually remove the element
+        // Make the bank sum
+        let bank_joltage = output.iter().fold(0, |acc, (_i, c)| (acc * 10) + c.to_digit(10).unwrap()); 
+        jolt_sum += bank_joltage;
+        println!("Bank joltage: {}", bank_joltage);
     }
     
     eprintln!("Joltage sum (part 1): {}", jolt_sum);
