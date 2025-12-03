@@ -73,6 +73,8 @@ fn main() {
             println!("Added {} to produce {}", jolts, bank_jolts);
         }
         jolt_sum_p2 += bank_jolts;
+        
+        // Idea to solve p2: same as p1 basically, but obviously it'll need to be a loop and actually remove the element
     }
     
     eprintln!("Joltage sum (part 1): {}", jolt_sum);
