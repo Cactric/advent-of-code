@@ -44,9 +44,9 @@ fn main() {
         for y in 0..rolls.len() {
             let mut new_roll_row = String::new();
             for x in 0..rolls[y].len() {
-                if rolls[y].chars().nth(x) != Some('@') {
-                    if let Some(c) = rolls[y].chars().nth(x) {
-                        new_roll_row.push(c);
+                if !check_roll(&rolls, x, y) {
+                    if let Some(c) = rolls[y].as_bytes().get(x) {
+                        new_roll_row.push(char::from(*c));
                         //print!("{}", c);
                     }
                     continue;
