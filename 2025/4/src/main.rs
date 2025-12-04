@@ -69,7 +69,7 @@ fn main() {
                     new_roll_row.push('.');
                     //print!("x");
                 } else {
-                    new_roll_row.push(rolls[y].chars().nth(x).unwrap());
+                    new_roll_row.push(char::from(*(rolls[y].as_bytes().get(x).unwrap())));
                     //print!("{}", rolls[y].chars().nth(x).unwrap());
                 }
             }
