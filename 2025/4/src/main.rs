@@ -7,15 +7,15 @@ use std::env;
 fn check_col(rolls: &Vec<String>, x: usize, y: usize) -> usize {
     let mut amount = 0;
     // Check above
-    if y > 0 && rolls[y - 1].chars().nth(x) == Some('@') {
+    if y > 0 && rolls[y-1].as_bytes().get(x) == Some(&b'@') {
         amount += 1;
     }
     // Check below
-    if y+1 < rolls.len() && rolls[y + 1].chars().nth(x) == Some('@') {
+    if y+1 < rolls.len() && rolls[y+1].as_bytes().get(x) == Some(&b'@') {
         amount += 1;
     }
     // Check middle
-    if rolls[y].chars().nth(x) == Some('@') {
+    if rolls[y].as_bytes().get(x) == Some(&b'@') {
         amount += 1;
     }
     return amount;
