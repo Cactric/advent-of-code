@@ -1,6 +1,48 @@
 use std::fs::read_to_string;
 use std::env;
-use std::ops::RangeInclusive;
+use std::ops::{RangeInclusive};
+use std::cmp::{min, max};
+
+fn consolidate(ranges: Vec<RangeInclusive<u64>>) -> Vec<RangeInclusive<u64>> {
+    if ranges.is_empty() {
+        return vec!();
+    }
+    
+    let mut sorted_ranges = ranges.clone();
+    sorted_ranges.sort_by_key(|r| *r.start());
+    let mut consolidated = vec!(sorted_ranges[0].clone());
+    
+    // For every range, check there's one that overlaps in consolidated
+    for r in sorted_ranges {
+        let mut overwriten = false;
+        for i in 0..consolidated.len() {
+            let c = &consolidated[i];
+            if is_overlapping(&r, c) {
+                // Rewrite the one in consolidated
+                consolidated[i] = min(*c.start(), *r.start())..=max(*c.end(), *r.end());
+                overwriten = true;
+                break;
+            }
+        }
+        if !overwriten {
+            // Add it to consolidated
+            consolidated.push(r.clone());
+        }
+    }
+    return consolidated;
+}
+
+fn is_overlapping(a: &RangeInclusive<u64>, b: &RangeInclusive<u64>) -> bool {
+    if a.end() >= b.start() && a.start() <= b.end() {
+        return true;
+    }
+    if b.end() <= a.start() && b.start() >= a.end() {
+        return true;
+    }
+    // More cases?
+    
+    return false;
+}
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -52,23 +94,14 @@ fn main() {
     
     
     // Part 2: How many IDs are considered "fresh", even if they're not available
-    let mut count: u64 = 0;
-    let mut counted_ranges: Vec<RangeInclusive<u64>> = Vec::new();
-    for range in &ranges {
-        // Slow...
-        for x in range.clone() {
-            let mut counted = false;
-            for r in &counted_ranges {
-                if r.contains(&x) {
-                    counted = true;
-                    break;
-                }
-            }
-            if !counted {
-                count += 1;
-            }
-        }
-        counted_ranges.push(range.clone());
+    
+    // TODO: consolidate ranges, then count them
+    ranges = consolidate(ranges);
+    
+    let mut count: usize = 0;
+    for r in ranges.clone() {
+        count += r.count();
     }
+
     eprintln!("Total fresh ingredients: {}", count);
 }
