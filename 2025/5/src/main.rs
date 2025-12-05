@@ -1,5 +1,6 @@
 use std::fs::read_to_string;
 use std::env;
+use std::ops::RangeInclusive;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -51,11 +52,23 @@ fn main() {
     
     
     // Part 2: How many IDs are considered "fresh", even if they're not available
-    // Doesn't work - there's overlap
-    let mut count = 0;
+    let mut count: u64 = 0;
+    let mut counted_ranges: Vec<RangeInclusive<u64>> = Vec::new();
     for range in &ranges {
-        // Slow...(?)
-        count += range.to_owned().count();
+        // Slow...
+        for x in range.clone() {
+            let mut counted = false;
+            for r in &counted_ranges {
+                if r.contains(&x) {
+                    counted = true;
+                    break;
+                }
+            }
+            if !counted {
+                count += 1;
+            }
+        }
+        counted_ranges.push(range.clone());
     }
     eprintln!("Total fresh ingredients: {}", count);
 }
