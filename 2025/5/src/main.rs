@@ -47,6 +47,15 @@ fn main() {
         }
     }
     
-    eprintln!("Fresh ingredients: {}", fresh);
+    eprintln!("Available fresh ingredients: {}", fresh);
     
+    
+    // Part 2: How many IDs are considered "fresh", even if they're not available
+    // Doesn't work - there's overlap
+    let mut count = 0;
+    for range in &ranges {
+        // Slow...(?)
+        count += range.to_owned().count();
+    }
+    eprintln!("Total fresh ingredients: {}", count);
 }
