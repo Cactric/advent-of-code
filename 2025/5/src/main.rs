@@ -12,20 +12,15 @@ fn consolidate(ranges: Vec<RangeInclusive<u64>>) -> Vec<RangeInclusive<u64>> {
     sorted_ranges.sort_by_key(|r| *r.start());
     let mut consolidated = vec!(sorted_ranges[0].clone());
     
-    // For every range, check there's one that overlaps in consolidated
+    // For every range, check if there's one that overlaps in consolidated
+    // Since I sorted the ranges, I only need to check the last element
     for r in sorted_ranges {
-        let mut overwriten = false;
-        for i in 0..consolidated.len() {
-            let c = &consolidated[i];
-            if is_overlapping(&r, c) {
-                // Rewrite the one in consolidated
-                consolidated[i] = min(*c.start(), *r.start())..=max(*c.end(), *r.end());
-                overwriten = true;
-                break;
-            }
-        }
-        if !overwriten {
-            // Add it to consolidated
+        let last = consolidated.last().unwrap().clone();
+        if is_overlapping(&r, &last) {
+            // Rewrite the one in consolidated
+            consolidated.pop();
+            consolidated.push(min(*last.start(), *last.start())..=max(*last.end(), *r.end()));
+        } else {
             consolidated.push(r.clone());
         }
     }
@@ -91,7 +86,6 @@ fn main() {
     }
     
     eprintln!("Available fresh ingredients: {}", fresh);
-    
     
     // Part 2: How many IDs are considered "fresh", even if they're not available
     
