@@ -35,13 +35,9 @@ fn main() {
             column_nums.push(split_nums[x][col].parse::<u64>().expect("Not a number"));
         }
         
-        match *op {
-            "*" => {
-                total += column_nums.iter().fold(1, |acc, x| acc * x);
-            }
-            "+" => {
-                total += column_nums.iter().fold(0, |acc, x| acc + x);
-            }
+        total += match *op {
+            "*" => column_nums.iter().fold(1, |acc, x| acc * x),
+            "+" => column_nums.iter().fold(0, |acc, x| acc + x),
             unknown => {
                 eprintln!("Unknown operation {}", unknown);
                 exit(2);
